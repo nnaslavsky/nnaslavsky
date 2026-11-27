@@ -336,7 +336,17 @@ def main():
     page(t, 'commissions.html', 'Commissions', commissions_page(), 'commissions.html')
     page(t, 'about.html', 'About', about_page(), 'about.html')
     page(t, 'contact.html', 'Contact', contact_page(), 'contact.html')
-    print('built site:', 7 + len(CATS), 'pages')
+    # Old naavanaslavsky.com addresses -> new pages (GitHub Pages serves /hobbies from hobbies.html)
+    OLD = {'home': 'index.html', 'hobbies': 'cat-hobbies.html', 'professions': 'cat-professions.html', 'music': 'cat-music.html',
+           'gardening': 'cat-gardening.html', 'couples': 'cat-couples.html', 'milestones-and-special-occasions': 'cat-milestones.html',
+           'home-old': 'cat-judaica.html', 'events': 'commissions.html'}
+    for old, new in OLD.items():
+        open(os.path.join(ROOT, old + '.html'), 'w').write(
+            f'<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Moved · Naava Naslavsky</title>'
+            f'<link rel="canonical" href="https://www.naavanaslavsky.com/{new}"><meta name="robots" content="noindex">'
+            f'<meta http-equiv="refresh" content="0; url={new}"><script>location.replace("{new}" + location.hash)</script></head>'
+            f'<body><p>This page has moved: <a href="{new}">continue to the new page</a>.</p></body></html>')
+    print('built site:', 7 + len(CATS), 'pages +', len(OLD), 'redirects from old addresses')
 
 
 if __name__ == '__main__':
