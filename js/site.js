@@ -96,10 +96,19 @@
         method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(data)
       }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
         .then(function (res) {
-          if (res.ok && String(res.j.success) === 'true') { note.textContent = 'Thank you! Your message was sent — I’ll get back to you soon.'; f.reset(); }
-          else throw new Error((res.j && res.j.message) || 'failed');
+          var msg = (res.j && res.j.message) || '';
+          if (res.ok && String(res.j.success) === 'true') { note.textContent = 'Thank you! Your message was sent — I’ll get back to you soon.'; f.reset(); return; }
+          if (/activat/i.test(msg)) {   // FormSubmit's one-time setup: the site owner must click the link it emailed her
+            note.textContent = 'Almost ready: this contact form is waiting to be activated (a one-time step for the site owner). Please email me directly at nnaslavsky@unmc.edu for now.';
+            if (window.console) console.warn('FormSubmit:', msg);
+            return;
+          }
+          throw new Error(msg || 'unexpected reply');
         })
-        .catch(function () { note.textContent = 'Sorry, the message couldn’t be sent. Please email me directly at nnaslavsky@unmc.edu.'; })
+        .catch(function (err) {
+          if (window.console) console.warn('Contact form error:', err && err.message);
+          note.textContent = 'Sorry, the message couldn’t be sent' + (err && err.message ? ' (' + err.message + ')' : '') + '. Please email me directly at nnaslavsky@unmc.edu.';
+        })
         .then(function () { btn.disabled = false; });
     });
   });
