@@ -6,3 +6,7 @@ data/works.csv
 data/angles.json
 data/arrangement-history/
 assets/img/.cache.json
+# Local-only tools: design mockups (B/C were not chosen) and Naava's arrangement tool + its server
+mockups/
+arrange/
+tools/server.py
