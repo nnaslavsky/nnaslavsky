@@ -80,36 +80,36 @@
     });
   }
 
-  // Contact form: sent through FormSubmit (free), which forwards it to Naava's email.
+  // Contact form: sent through Web3Forms (free), which emails it to Naava. Gives up after 10 s.
   document.querySelectorAll('form[data-endpoint]').forEach(function (f) {
     var params = new URLSearchParams(location.search);
     if (params.get('topic') && f.topic) f.topic.value = params.get('topic');
+    var FALLBACK = ' Please email me directly at nnaslavsky@unmc.edu.';
     f.addEventListener('submit', function (e) {
       e.preventDefault();
       var note = f.querySelector('.form-note'), btn = f.querySelector('button[type="submit"]');
+      if (f.botcheck && f.botcheck.checked) return;            // spam bot
       var data = {};
-      new FormData(f).forEach(function (v, k) { data[k] = v; });
-      if (data._honey) return;                       // spam bot
-      data._replyto = data.email;
+      new FormData(f).forEach(function (v, k) { if (k !== 'botcheck') data[k] = v; });
+      if (data.topic) data.subject = data.topic + ' — message from naavanaslavsky.com';
+      var ctrl = window.AbortController ? new AbortController() : null;
+      var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 10000);
       btn.disabled = true; note.hidden = false; note.textContent = 'Sending…';
       fetch(f.getAttribute('data-endpoint'), {
-        method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(data)
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(data), signal: ctrl ? ctrl.signal : undefined
       }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
         .then(function (res) {
-          var msg = (res.j && res.j.message) || '';
           if (res.ok && String(res.j.success) === 'true') { note.textContent = 'Thank you! Your message was sent — I’ll get back to you soon.'; f.reset(); return; }
-          if (/activat/i.test(msg)) {   // FormSubmit's one-time setup: the site owner must click the link it emailed her
-            note.textContent = 'Almost ready: this contact form is waiting to be activated (a one-time step for the site owner). Please email me directly at nnaslavsky@unmc.edu for now.';
-            if (window.console) console.warn('FormSubmit:', msg);
-            return;
-          }
-          throw new Error(msg || 'unexpected reply');
+          throw new Error((res.j && res.j.message) || 'unexpected reply');
         })
         .catch(function (err) {
           if (window.console) console.warn('Contact form error:', err && err.message);
-          note.textContent = 'Sorry, the message couldn’t be sent' + (err && err.message ? ' (' + err.message + ')' : '') + '. Please email me directly at nnaslavsky@unmc.edu.';
+          note.textContent = (err && err.name === 'AbortError')
+            ? 'Sorry, this is taking too long and the message may not have been sent.' + FALLBACK
+            : 'Sorry, the message couldn’t be sent' + (err && err.message ? ' (' + err.message + ')' : '') + '.' + FALLBACK;
         })
-        .then(function () { btn.disabled = false; });
+        .then(function () { clearTimeout(timer); btn.disabled = false; });
     });
   });
 })();

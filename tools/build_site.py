@@ -69,6 +69,8 @@ GALLERIES = [('Galleria Greendale', 'Greendale, WI', 'http://galleriagreendale.c
              ('Artisans in the Loop', 'St. Louis, MO', 'https://artisansintheloop.square.site/s/search?q=naava%20naslavsky'),
              ('Bluestem Missouri Crafts', 'Columbia, MO', 'https://bluestemcrafts.com/'),
              ('Artisans Collective STL', 'St. Louis, MO', 'https://artisanscollectivestl.square.site/s/search?q=naava')]
+# Contact form delivery: Web3Forms (free). The access key is meant to be public; it maps to the inbox chosen in the Web3Forms dashboard.
+WEB3FORMS_KEY = 'a1ea18c9-3344-43c1-9a23-99677e590eea'
 EMAIL, PHONE, PHONE_TEL = 'nnaslavsky@unmc.edu', '402-650-3874', '+14026503874'
 INSTAGRAM, FACEBOOK = 'https://www.instagram.com/naavanaslavsky/', 'https://www.facebook.com/naava.naslavsky/'
 
@@ -313,9 +315,10 @@ def contact_page():
             f'<ul class="contact-list"><li>{ICON["mail"]}<a href="mailto:{EMAIL}">{EMAIL}</a></li><li>{ICON["phone"]}<a href="tel:{PHONE_TEL}">{PHONE}</a></li>'
             f'<li>{ICON["instagram"]}<a href="{INSTAGRAM}">@naavanaslavsky</a></li><li>{ICON["facebook"]}<a href="{FACEBOOK}">Facebook</a></li></ul>'
             f'<h2>Galleries</h2>{galleries_list()}</div>'
-            f'<form class="contact-form note-card" data-endpoint="https://formsubmit.co/ajax/{EMAIL}">'
-            f'<input type="hidden" name="_subject" value="New message from naavanaslavsky.com"><input type="hidden" name="_template" value="table">'
-            f'<input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" class="sr">'
+            f'<form class="contact-form note-card" data-endpoint="https://api.web3forms.com/submit">'
+            f'<input type="hidden" name="access_key" value="{WEB3FORMS_KEY}">'
+            f'<input type="hidden" name="subject" value="New message from naavanaslavsky.com"><input type="hidden" name="from_name" value="naavanaslavsky.com">'
+            f'<input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" class="sr">'
             f'<label>Your name<input name="name" required autocomplete="name"></label>'
             f'<label>Email<input name="email" type="email" required autocomplete="email"></label>'
             f'<label>Phone <small>(optional)</small><input name="phone" type="tel" autocomplete="tel"></label>'
