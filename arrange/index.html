@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arrange the website</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="top">
+  <div class="top-inner">
+    <div class="brand">
+      <span class="brand-small">Naava’s website</span>
+      <h1>Arrange your pieces</h1>
+    </div>
+    <div class="top-actions">
+      <button type="button" class="status" id="status" data-act="save-now" title="Your changes save by themselves">Loading…</button>
+      <button type="button" class="btn btn-undo" id="undo" data-act="undo" disabled title="Undo the last change (Ctrl/Cmd + Z)">↶ Undo</button>
+      <a class="btn btn-preview" href="../mockups/index.html" target="_blank" rel="noopener">Preview on the website ↗</a>
+    </div>
+  </div>
+  <nav class="tabs" id="tabs" aria-label="Sections"></nav>
+</header>
+
+<div id="banner" class="banner" hidden></div>
+
+<main id="main" tabindex="-1">
+  <p class="loading">Loading your pieces…</p>
+</main>
+
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<div id="lightbox" class="overlay" hidden role="dialog" aria-modal="true" aria-label="Large picture"></div>
+<div id="modal" class="overlay" hidden role="dialog" aria-modal="true"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
